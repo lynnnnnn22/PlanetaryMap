@@ -110,7 +110,6 @@ function PlanetaryMap({ data }) {
         uniqueApps.forEach((app, idx) => {
             map.set(app, PLANET_PALETTE[idx % PLANET_PALETTE.length]);
         });
-        console.log("planetColorByApp", map);
         return map;
     }, [planets]);
 
@@ -303,98 +302,169 @@ function PlanetaryMap({ data }) {
         return lineGen(points);
     };
 
+    const totalSeconds = d3.sum(appTimes, (d) => d.seconds) || 0;
+
+    // Build info for the hovered app (tool)
+    const hoveredAppInfo = useMemo(() => {
+        if (!hoveredApp) return null;
+
+        const appEntry = appTimes.find((a) => a.app === hoveredApp);
+        const seconds = appEntry ? appEntry.seconds : 0;
+        const share = totalSeconds > 0 ? seconds / totalSeconds : 0;
+
+        const incoming = transitions.filter((t) => t.to.app === hoveredApp);
+        const outgoing = transitions.filter((t) => t.from.app === hoveredApp);
+
+        const allRelated = [...incoming, ...outgoing];
+        const avgFriction =
+            allRelated.length > 0
+                ? allRelated.reduce((sum, t) => sum + (t.friction ?? 0), 0) /
+                allRelated.length
+                : 0;
+
+        console.log("hoveredAppInfo", { hoveredApp, seconds, share, incoming, outgoing, avgFriction });
+
+        return {
+            app: hoveredApp,
+            seconds,
+            share,
+            incomingCount: incoming.length,
+            outgoingCount: outgoing.length,
+            avgFriction: Number(avgFriction.toFixed(2)),
+            color: planetColorByApp.get(hoveredApp) || "#6bdcff"
+        };
+    }, [hoveredApp, appTimes, totalSeconds, transitions, planetColorByApp]);
+
     return (
-        <svg
-            className="planetary-svg"
-            viewBox={`0 0 ${width} ${height}`}
-            preserveAspectRatio="xMidYMid meet"
-        >
-            <g transform={`translate(${cx}, ${cy})`}>
-                {/* Orbits */}
-                {orbitRadii.map((r, i) => (
-                    <g key={i}>
-                        <circle className="orbit-hitbox" cx={0} cy={0} r={r} />
-                        <circle className="planetary-orbit" cx={0} cy={0} r={r} />
-                    </g>
-                ))}
-
-                {/* Transitions */}
-                {transitions.map((t) => {
-                    const isConnected =
-                        hoveredApp &&
-                        (t.from.app === hoveredApp || t.to.app === hoveredApp);
-
-                    const classes = ["planetary-edge"];
-                    if (hoveredApp) {
-                        classes.push(
-                            isConnected ? "planetary-edge--active" : "planetary-edge--dim"
-                        );
-                    }
-
-                    const width =
-                        frictionStrokeWidth(t.friction) * (isConnected ? 1.3 : 1);
-
-                    return (
-                        <path
-                            key={t.id}
-                            className={classes.join(" ")}
-                            d={wigglePath(
-                                t.from,
-                                t.to,
-                                t.friction,
-                                t.fromRadius,
-                                t.toRadius,
-                                t.parallelIndex,
-                                t.parallelCount
-                            )}
-                            stroke={pathColor(t.friction)}
-                            strokeWidth={width}
-                        />
-                    );
-                })}
-
-                {/* Planets */}
-                {planets.map((p, i) => {
-                    const isHovered = hoveredApp === p.app;
-                    const isConnected =
-                        hoveredApp && connectedApps && connectedApps.has(p.app);
-
-                    const planetClasses = ["planetary-planet"];
-                    if (hoveredApp) {
-                        if (isHovered) {
-                            planetClasses.push("planetary-planet--active");
-                        } else if (!isConnected) {
-                            planetClasses.push("planetary-planet--dim");
-                        }
-                    }
-
-                    return (
-                        <g
-                            key={i}
-                            transform={`translate(${p.x}, ${p.y})`}
-                            onMouseEnter={() => setHoveredApp(p.app)}
-                            onMouseLeave={() => setHoveredApp(null)}
-                        >
-                            <circle
-                                className={planetClasses.join(" ")}
-                                r={planetRadius(p.seconds)}
-                                fill={planetColorByApp.get(p.app) || "#6bdcff"}
-                            />
-                            <text
-                                className={[
-                                    "planetary-label",
-                                    hoveredApp && !isHovered && !isConnected ? "planetary-label--dim" : ""
-                                ].join(" ")}
-                                x={0}
-                                y={0}
-                            >
-                                {p.app}
-                            </text>
+        <div className="planetary-container">
+            <svg
+                className="planetary-svg"
+                viewBox={`0 0 ${width} ${height}`}
+                preserveAspectRatio="xMidYMid meet"
+            >
+                <g transform={`translate(${cx}, ${cy})`}>
+                    {/* Orbits */}
+                    {orbitRadii.map((r, i) => (
+                        <g key={i}>
+                            <circle className="orbit-hitbox" cx={0} cy={0} r={r} />
+                            <circle className="planetary-orbit" cx={0} cy={0} r={r} />
                         </g>
-                    );
-                })}
-            </g>
-        </svg>
+                    ))}
+
+                    {/* Transitions */}
+                    {transitions.map((t) => {
+                        const isConnected =
+                            hoveredApp &&
+                            (t.from.app === hoveredApp || t.to.app === hoveredApp);
+
+                        const classes = ["planetary-edge"];
+                        if (hoveredApp) {
+                            classes.push(
+                                isConnected ? "planetary-edge--active" : "planetary-edge--dim"
+                            );
+                        }
+
+                        // const widthStroke =
+                        //     frictionStrokeWidth(t.friction) * (isConnected ? 1.3 : 1);
+
+                        return (
+                            <path
+                                key={t.id}
+                                className={classes.join(" ")}
+                                d={wigglePath(
+                                    t.from,
+                                    t.to,
+                                    t.friction,
+                                    t.fromRadius,
+                                    t.toRadius,
+                                    t.parallelIndex,
+                                    t.parallelCount
+                                )}
+                                stroke={pathColor(t.friction)}
+                                strokeWidth={3}
+                            />
+                        );
+                    })}
+
+                    {/* Planets */}
+                    {planets.map((p, i) => {
+                        const isHovered = hoveredApp === p.app;
+                        const isConnected =
+                            hoveredApp && connectedApps && connectedApps.has(p.app);
+
+                        const planetClasses = ["planetary-planet"];
+                        if (hoveredApp) {
+                            if (isHovered) {
+                                planetClasses.push("planetary-planet--active");
+                            } else if (!isConnected) {
+                                planetClasses.push("planetary-planet--dim");
+                            }
+                        }
+
+                        return (
+                            <g
+                                key={i}
+                                transform={`translate(${p.x}, ${p.y})`}
+                                onMouseEnter={() => setHoveredApp(p.app)}
+                                onMouseLeave={() => setHoveredApp(null)}
+                            >
+                                <circle
+                                    className={planetClasses.join(" ")}
+                                    r={planetRadius(p.seconds)}
+                                    fill={planetColorByApp.get(p.app) || "#6bdcff"}
+                                />
+                                <text
+                                    className={[
+                                        "planetary-label",
+                                        hoveredApp && !isHovered && !isConnected
+                                            ? "planetary-label--dim"
+                                            : ""
+                                    ].join(" ")}
+                                    x={0}
+                                    y={0}
+                                >
+                                    {p.app}
+                                </text>
+                            </g>
+                        );
+                    })}
+                </g>
+            </svg>
+
+            {hoveredAppInfo && (
+                <div className="planetary-tooltip">
+                    <div className="planetary-tooltip-header">
+                        <span
+                            className="planetary-tooltip-color"
+                            style={{ backgroundColor: hoveredAppInfo.color }}
+                        />
+                        <span className="planetary-tooltip-title">
+                            {hoveredAppInfo.app}
+                        </span>
+                    </div>
+                    <div className="planetary-tooltip-row">
+                        <span>Total time:</span>
+                        <span>
+                            {Math.round(hoveredAppInfo.seconds / 60)} min
+                            {" "}
+                            ({Math.round(hoveredAppInfo.share * 100)}%)
+                        </span>
+                    </div>
+                    <div className="planetary-tooltip-row">
+                        <span>Transitions:</span>
+                        <span>
+                            {hoveredAppInfo.incomingCount} in /
+                            {" "}
+                            {hoveredAppInfo.outgoingCount} out
+                        </span>
+                    </div>
+                    <div className="planetary-tooltip-row">
+                        <span>Avg friction:</span>
+                        <span>{hoveredAppInfo.avgFriction}</span>
+                    </div>
+                </div>
+            )}
+        </div>
     );
 }
 
