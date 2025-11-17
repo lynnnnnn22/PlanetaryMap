@@ -1,0 +1,97 @@
+.planetary-wrapper {
+    width: 90vw;
+    /* take 90% of viewport width */
+    height: 90vh;
+    /* take 90% of viewport height */
+    display: flex;
+    justify-content: center;
+    /* center horizontally */
+    align-items: center;
+    /* center vertically */
+    overflow: hidden;
+    /* prevent scrollbars */
+    margin: 0 auto;
+    /* center within page */
+}
+
+/* The SVG now stretches to fill the wrapper */
+.planetary-svg {
+    width: 100%;
+    /* scale to wrapper width */
+    height: 100%;
+    /* scale to wrapper height */
+    background-color: #0b1736;
+    border-radius: 12px;
+    display: block;
+}
+
+.orbit-hitbox {
+    fill: none;
+    stroke: transparent;
+    stroke-width: 10px;
+    pointer-events: stroke;
+}
+
+.planetary-orbit {
+    fill: none;
+    stroke: #243a7a;
+    stroke-dasharray: 4 6;
+    stroke-width: 2px;
+    pointer-events: none;
+    /* not clickable */
+}
+
+.orbit-hitbox:hover+.planetary-orbit {
+    stroke: #e5f9ff;
+    stroke-width: 3px;
+    filter: drop-shadow(0 0 6px rgba(229, 249, 255, 0.9));
+}
+
+/* Planet circles */
+.planetary-planet {
+    stroke: #cfefff;
+    stroke-width: 2px;
+    transition:
+        stroke 0.2s ease,
+        stroke-width 0.2s ease,
+        filter 0.2s ease,
+        transform 0.2s ease;
+}
+
+.planetary-planet--active {
+    stroke-width: 4px;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.9));
+    transform: scale(1.06);
+}
+
+.planetary-planet--dim {
+    opacity: 0.2;
+}
+
+.planetary-edge {
+    fill: none;
+    opacity: 0.85;
+    transition:
+        opacity 0.2s ease,
+        stroke-width 0.2s ease;
+}
+
+.planetary-edge--active {
+    opacity: 1;
+}
+
+.planetary-edge--dim {
+    opacity: 0.2;
+}
+
+/* Planet labels */
+.planetary-label {
+  fill: #ffffff;
+  font-size: 12px;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+.planetary-label--dim {
+    opacity: 0.2;
+}
