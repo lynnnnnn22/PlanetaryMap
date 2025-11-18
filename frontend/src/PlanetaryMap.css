@@ -18,7 +18,7 @@
 .planetary-svg {
     width: 100%;
     /* scale to wrapper width */
-    height: 90%;
+    height: 100%;
     /* scale to wrapper height */
     background-color: #0b1736;
     border-radius: 12px;
