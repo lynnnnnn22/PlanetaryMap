@@ -418,18 +418,30 @@ function PlanetaryMap({ data, variant = "basic" }) {
         return addParallelIndices(base);
     }, [rawTransitions, config.aggregatePaths]);
 
-    // 6. Determine which apps are connected to hovered app (for dimming)
-    const connectedApps = useMemo(() => {
-        if (!hoveredApp) return null;
-        const set = new Set([hoveredApp]);
-        for (const t of transitions) {
-            if (t.from.app === hoveredApp || t.to.app === hoveredApp) {
-                set.add(t.from.app);
-                set.add(t.to.app);
+    const highlightedApps = useMemo(() => {
+        // If an edge is hovered, highlight exactly its two endpoints
+        if (hoveredEdgeId != null) {
+            const edge = transitions.find((t) => t.id === hoveredEdgeId);
+            if (edge) {
+                return new Set([edge.from.app, edge.to.app]);
             }
         }
-        return set;
-    }, [hoveredApp, transitions]);
+
+        // Otherwise, fall back to planet hover behavior
+        if (hoveredApp) {
+            const set = new Set([hoveredApp]);
+            for (const t of transitions) {
+                if (t.from.app === hoveredApp || t.to.app === hoveredApp) {
+                    set.add(t.from.app);
+                    set.add(t.to.app);
+                }
+            }
+            return set;
+        }
+
+        // No hover → no highlighting
+        return null;
+    }, [hoveredApp, hoveredEdgeId, transitions]);
 
     // 7. Tooltip info
     const totalSeconds = d3.sum(appTimes, (d) => d.seconds) || 0;
@@ -516,6 +528,27 @@ function PlanetaryMap({ data, variant = "basic" }) {
                 aria-label="Planetary map of focused tools and transitions"
             >
                 <g transform={`translate(${cx}, ${cy})`}>
+                    {config.showDirection && (
+                        <defs>
+                            {transitions.map((t) => {
+                                const color = pathColor(t.friction ?? 0);
+                                return (
+                                    <linearGradient
+                                        key={t.id}
+                                        id={`edge-grad-${t.id}`}
+                                        x1={t.from.x}
+                                        y1={t.from.y}
+                                        x2={t.to.x}
+                                        y2={t.to.y}
+                                        gradientUnits="userSpaceOnUse"
+                                    >
+                                        <stop offset="0%" stopColor={color} stopOpacity={1} />
+                                        <stop offset="100%" stopColor={color} stopOpacity={0} />
+                                    </linearGradient>
+                                );
+                            })}
+                        </defs>
+                    )}
                     {/* Orbits */}
                     {orbitRadii.map((r, i) => (
                         <g key={i}>
@@ -546,13 +579,13 @@ function PlanetaryMap({ data, variant = "basic" }) {
 
                         const strokeWidthBase = config.minimalPaths
                             ? 1 + (t.count || 1) * 0.6
-                            : frictionStrokeWidth(t.friction);
+                            : 3;
 
                         const strokeWidth = isHoveredEdge ? strokeWidthBase * 1.6 : strokeWidthBase;
 
                         const stroke = config.showDirection
-                            ? pathColor(t.friction ?? 0)
-                            : "#9be7ff";
+                            ? `url(#edge-grad-${t.id})`
+                            : pathColor(t.friction ?? 0);
 
                         const pathFn = config.minimalPaths ? straightPath : wigglePath;
 
@@ -603,22 +636,21 @@ function PlanetaryMap({ data, variant = "basic" }) {
                     {/* Planets */}
                     {planets.map((p, i) => {
                         const isHovered = hoveredApp === p.app;
-                        const isConnected =
-                            hoveredApp &&
-                            connectedApps &&
-                            connectedApps.has(p.app);
+                        const isHighlighted =
+                            highlightedApps && highlightedApps.has(p.app);
 
                         const planetClasses = ["planetary-planet"];
-                        if (hoveredApp) {
+
+                        if (highlightedApps) {
                             if (isHovered) {
                                 planetClasses.push("planetary-planet--active");
-                            } else if (!isConnected) {
+                            } else if (!isHighlighted) {
                                 planetClasses.push("planetary-planet--dim");
                             }
                         }
 
                         const labelClasses = ["planetary-label"];
-                        if (hoveredApp && !isHovered && !isConnected) {
+                        if (highlightedApps && !isHighlighted) {
                             labelClasses.push("planetary-label--dim");
                         }
 
@@ -633,9 +665,7 @@ function PlanetaryMap({ data, variant = "basic" }) {
                                 aria-label={`Tool ${p.app}`}
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter" || e.key === " ") {
-                                        setHoveredApp((prev) =>
-                                            prev === p.app ? null : p.app
-                                        );
+                                        setHoveredApp((prev) => (prev === p.app ? null : p.app));
                                     }
                                 }}
                             >

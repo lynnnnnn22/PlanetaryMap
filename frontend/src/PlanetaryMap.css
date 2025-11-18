@@ -70,7 +70,7 @@
 
 .planetary-edge {
     fill: none;
-    opacity: 0.85;
+    opacity: 1;
     transition:
         opacity 0.2s ease,
         stroke-width 0.2s ease;
