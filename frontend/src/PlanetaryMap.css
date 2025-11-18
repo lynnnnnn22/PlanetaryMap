@@ -84,10 +84,25 @@
     opacity: 0.2;
 }
 
+.planetary-edge--hover {
+    stroke-opacity: 1;
+    filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.9));
+}
+
+.planetary-path-label {
+    fill: #e5e7eb;
+    font-size: 12px;
+    font-weight: 600;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
+    opacity: 0.85;
+}
+
 /* Planet labels */
 .planetary-label {
   fill: #ffffff;
-  font-size: 12px;
+  font-size: clamp(10px, 1vw, 16px);
   text-anchor: middle;
   dominant-baseline: middle;
 }
@@ -107,13 +122,15 @@
     position: absolute;
     top: 16px;
     right: 16px;
+    width: clamp(180px, 15vw, 350px);
+    height: auto;
     min-width: 220px;
     padding: 10px 14px;
     border-radius: 10px;
     background: rgba(15, 23, 42, 0.9);
     border: 1px solid rgba(148, 163, 184, 0.6);
     color: #e5e7eb;
-    font-size: 13px;
+    font-size: clamp(12px, 1vw, 20px);
     backdrop-filter: blur(8px);
 }
 
@@ -132,7 +149,7 @@
 }
 
 .planetary-tooltip-title {
-    font-size: 14px;
+    font-size: clamp(12px, 1vw, 20px);
 }
 
 .planetary-tooltip-row {
@@ -140,4 +157,10 @@
     justify-content: space-between;
     gap: 8px;
     margin-top: 2px;
+}
+
+.planetary-tooltip-divider {
+    border: none;
+    border-top: 1px solid rgba(148, 163, 184, 0.4);
+    margin: 0.5rem 0;
 }

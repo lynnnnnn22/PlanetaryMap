@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef } from "react";
 import * as d3 from "d3";
 import "./PlanetaryMap.css";
 
@@ -18,24 +18,28 @@ const VARIANTS = {
     basic: {
         showLabels: true,
         showDirection: false,
+        numberingPaths: false,
         aggregatePaths: false,
         minimalPaths: false
     },
     detailed: {
         showLabels: true,
         showDirection: true,
+        numberingPaths: true,
         aggregatePaths: false,
         minimalPaths: false
     },
     aggregated: {
         showLabels: true,
         showDirection: true,
+        numberingPaths: false,
         aggregatePaths: true,
         minimalPaths: false
     },
     minimal: {
         showLabels: false,
         showDirection: false,
+        numberingPaths: false,
         aggregatePaths: true,
         minimalPaths: true
     }
@@ -254,12 +258,41 @@ function wigglePath(
     return lineGen(points);
 }
 
+function pathLabelPosition(from, to, fromRadius, parallelIndex = 0, parallelCount = 1) {
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+    const length = Math.sqrt(dx * dx + dy * dy) || 1;
+
+    const ux = dx / length;
+    const uy = dy / length;
+    const nx = -uy;
+    const ny = ux;
+
+    // spread labels slightly for parallel paths
+    const parallelSpread = 48;
+    const offset = (parallelIndex / parallelCount - 1 / 2) * parallelSpread;
+    // const parallelSpread = 14;
+    // const offset = (parallelIndex - (parallelCount - 1) / 2) * parallelSpread;
+
+    // distance from the center of the "from" planet where the label should sit
+    const labelDistance = fromRadius + 6;
+
+    const x = from.x + ux * labelDistance + nx * offset;
+    const y = from.y + uy * labelDistance + ny * offset;
+
+    return { x, y };
+}
+
 // ------------------------------------------------------
 // Main component
 // ------------------------------------------------------
 
 function PlanetaryMap({ data, variant = "basic" }) {
     const [hoveredApp, setHoveredApp] = useState(null);
+    const [hoveredEdgeId, setHoveredEdgeId] = useState(null);
+
+    const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
+    const containerRef = useRef(null);
 
     const config = VARIANTS[variant] ?? VARIANTS.basic;
 
@@ -429,6 +462,19 @@ function PlanetaryMap({ data, variant = "basic" }) {
         };
     }, [hoveredApp, appTimes, totalSeconds, transitions, planetColorByApp]);
 
+    const hoveredEdgeInfo = useMemo(() => {
+        if (hoveredEdgeId == null) return null;
+        const edge = transitions.find((t) => t.id === hoveredEdgeId);
+        if (!edge) return null;
+
+        return {
+            from: edge.from.app,
+            to: edge.to.app,
+            friction: Number((edge.friction ?? 0).toFixed(2)),
+            count: edge.count || 1,
+        };
+    }, [hoveredEdgeId, transitions]);
+
     // ------------------------------------------------------
     // Render
     // ------------------------------------------------------
@@ -446,7 +492,23 @@ function PlanetaryMap({ data, variant = "basic" }) {
     }
 
     return (
-        <div className="planetary-container">
+        <div
+            className="planetary-container"
+            ref={containerRef}
+            onMouseMove={(e) => {
+                if (!containerRef.current) return;
+                const rect = containerRef.current.getBoundingClientRect();
+                setTooltipPos({
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top,
+                });
+            }}
+            onMouseLeave={() => {
+                // optional: hide tooltip when leaving the whole map
+                setHoveredApp(null);
+                setHoveredEdgeId(null);
+            }}
+        >
             <svg
                 className="planetary-svg"
                 viewBox={`0 0 ${width} ${height}`}
@@ -468,18 +530,25 @@ function PlanetaryMap({ data, variant = "basic" }) {
                             hoveredApp &&
                             (t.from.app === hoveredApp || t.to.app === hoveredApp);
 
+                        const isHoveredEdge = hoveredEdgeId === t.id;
+
                         const classes = ["planetary-edge"];
                         if (hoveredApp) {
                             classes.push(
-                                isConnected
-                                    ? "planetary-edge--active"
-                                    : "planetary-edge--dim"
+                                isConnected ? "planetary-edge--active" : "planetary-edge--dim"
+                            );
+                        }
+                        if (hoveredEdgeId != null) {
+                            classes.push(
+                                isHoveredEdge ? "planetary-edge--hover" : "planetary-edge--dim"
                             );
                         }
 
-                        const strokeWidth = config.minimalPaths
+                        const strokeWidthBase = config.minimalPaths
                             ? 1 + (t.count || 1) * 0.6
-                            : 3;
+                            : frictionStrokeWidth(t.friction);
+
+                        const strokeWidth = isHoveredEdge ? strokeWidthBase * 1.6 : strokeWidthBase;
 
                         const stroke = config.showDirection
                             ? pathColor(t.friction ?? 0)
@@ -487,23 +556,47 @@ function PlanetaryMap({ data, variant = "basic" }) {
 
                         const pathFn = config.minimalPaths ? straightPath : wigglePath;
 
+                        const labelPos = config.numberingPaths
+                            ? pathLabelPosition(
+                                t.from,
+                                t.to,
+                                t.fromRadius,
+                                t.parallelIndex,
+                                t.parallelCount
+                            )
+                            : null;
+
                         return (
-                            <path
+                            <g
                                 key={t.id}
-                                className={classes.join(" ")}
-                                d={pathFn(
-                                    t.from,
-                                    t.to,
-                                    t.friction ?? 0,
-                                    t.fromRadius,
-                                    t.toRadius,
-                                    t.parallelIndex,
-                                    t.parallelCount
+                                onMouseEnter={() => setHoveredEdgeId(t.id)}
+                                onMouseLeave={() => setHoveredEdgeId(null)}
+                            >
+                                <path
+                                    className={classes.join(" ")}
+                                    d={pathFn(
+                                        t.from,
+                                        t.to,
+                                        t.friction ?? 0,
+                                        t.fromRadius,
+                                        t.toRadius,
+                                        t.parallelIndex,
+                                        t.parallelCount
+                                    )}
+                                    stroke={stroke}
+                                    strokeWidth={strokeWidth}
+                                    fill="none"
+                                />
+                                {config.numberingPaths && labelPos && (
+                                    <text
+                                        className="planetary-path-label"
+                                        x={labelPos.x}
+                                        y={labelPos.y}
+                                    >
+                                        {t.id + 1}
+                                    </text>
                                 )}
-                                stroke={stroke}
-                                strokeWidth={strokeWidth}
-                                fill="none"
-                            />
+                            </g>
                         );
                     })}
 
@@ -563,35 +656,66 @@ function PlanetaryMap({ data, variant = "basic" }) {
             </svg>
 
             {/* Tooltip */}
-            {hoveredAppInfo && (
-                <div className="planetary-tooltip">
-                    <div className="planetary-tooltip-header">
-                        <span
-                            className="planetary-tooltip-color"
-                            style={{ backgroundColor: hoveredAppInfo.color }}
-                        />
-                        <span className="planetary-tooltip-title">
-                            {hoveredAppInfo.app}
-                        </span>
-                    </div>
-                    <div className="planetary-tooltip-row">
-                        <span>Total time:</span>
-                        <span>
-                            {Math.round(hoveredAppInfo.seconds / 60)} min (
-                            {Math.round(hoveredAppInfo.share * 100)}%)
-                        </span>
-                    </div>
-                    <div className="planetary-tooltip-row">
-                        <span>Transitions:</span>
-                        <span>
-                            {hoveredAppInfo.incomingCount} in /{" "}
-                            {hoveredAppInfo.outgoingCount} out
-                        </span>
-                    </div>
-                    <div className="planetary-tooltip-row">
-                        <span>Avg friction:</span>
-                        <span>{hoveredAppInfo.avgFriction}</span>
-                    </div>
+            {(hoveredAppInfo || hoveredEdgeInfo) && (
+                <div
+                    className="planetary-tooltip"
+                    style={{
+                        left: tooltipPos.x,
+                        top: tooltipPos.y,
+                        transform: "translate(12px, -12px)", // offset a bit from cursor
+                    }}
+                >
+                    {hoveredAppInfo && (
+                        <>
+                            <div className="planetary-tooltip-header">
+                                <span
+                                    className="planetary-tooltip-color"
+                                    style={{ backgroundColor: hoveredAppInfo.color }}
+                                />
+                                <span className="planetary-tooltip-title">
+                                    {hoveredAppInfo.app}
+                                </span>
+                            </div>
+                            <div className="planetary-tooltip-row">
+                                <span>Total time:</span>
+                                <span>
+                                    {Math.round(hoveredAppInfo.seconds / 60)} min (
+                                    {Math.round(hoveredAppInfo.share * 100)}%)
+                                </span>
+                            </div>
+                            <div className="planetary-tooltip-row">
+                                <span>Transitions:</span>
+                                <span>
+                                    {hoveredAppInfo.incomingCount} in /{" "}
+                                    {hoveredAppInfo.outgoingCount} out
+                                </span>
+                            </div>
+                            <div className="planetary-tooltip-row">
+                                <span>Avg friction:</span>
+                                <span>{hoveredAppInfo.avgFriction}</span>
+                            </div>
+
+                            {hoveredEdgeInfo && <hr className="planetary-tooltip-divider" />}
+                        </>
+                    )}
+
+                    {hoveredEdgeInfo && (
+                        <>
+                            <div className="planetary-tooltip-header">
+                                <span className="planetary-tooltip-title">
+                                    Path: {hoveredEdgeInfo.from} → {hoveredEdgeInfo.to}
+                                </span>
+                            </div>
+                            <div className="planetary-tooltip-row">
+                                <span>Transitions on this path:</span>
+                                <span>{hoveredEdgeInfo.count}</span>
+                            </div>
+                            <div className="planetary-tooltip-row">
+                                <span>Avg friction on this path:</span>
+                                <span>{hoveredEdgeInfo.friction}</span>
+                            </div>
+                        </>
+                    )}
                 </div>
             )}
         </div>
