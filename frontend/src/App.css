@@ -1,14 +1,17 @@
 .app-root {
   min-height: 100vh;
-  /* so content fills the viewport */
-  width: 100%;
-  color: #ffffff;
+  background: #020617;
+  color: #e5e7eb;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* horizontally center everything */
+  padding: 0 2rem;
+}
+
+.app-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 .app-title {
@@ -16,9 +19,92 @@
   margin: 20px 0 0;
 }
 
-.planetary-wrapper {
+.app-main {
+  flex: 1;
   display: flex;
-  justify-content: center;
+  flex-direction: row;
+  overflow: hidden;
+  /* max-width: 1400px; */
   width: 100%;
-  padding: 20px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* LEFT: map area */
+.planetary-wrapper {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 1rem 1.5rem;
+  min-width: 0;
+  /* important so SVG can shrink */
+}
+
+/* RIGHT: settings sidebar */
+.app-settings-sidebar {
+  width: 260px;
+  padding: 1rem 1rem 1.5rem;
+  border-left: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(15, 23, 42, 0.95);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.app-settings-title {
+  font-size: 1rem;
+  margin: 0 0 0.5rem;
+}
+
+.app-settings-section {
+  margin-bottom: 0.75rem;
+}
+
+.app-settings-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+  margin-bottom: 0.35rem;
+}
+
+.app-variant-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.app-variant-button {
+  flex: 1 1 48%;
+  padding: 0.35rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, transform 80ms ease;
+}
+
+.app-variant-button:hover {
+  background: rgba(30, 64, 175, 0.4);
+  border-color: #6366f1;
+  transform: translateY(-1px);
+}
+
+.app-variant-button--active {
+  background: #4f46e5;
+  border-color: #818cf8;
+}
+
+.app-settings-description h3 {
+  margin: 0 0 0.3rem;
+  font-size: 0.9rem;
+}
+
+.app-settings-description p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #9ca3af;
 }
