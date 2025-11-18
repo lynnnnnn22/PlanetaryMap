@@ -291,9 +291,6 @@ function PlanetaryMap({ data, variant = "basic" }) {
     const [hoveredApp, setHoveredApp] = useState(null);
     const [hoveredEdgeId, setHoveredEdgeId] = useState(null);
 
-    const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
-    const containerRef = useRef(null);
-
     const config = VARIANTS[variant] ?? VARIANTS.basic;
 
     // 1. Filter out AFK so it never appears as a planet or path endpoint
@@ -504,23 +501,7 @@ function PlanetaryMap({ data, variant = "basic" }) {
     }
 
     return (
-        <div
-            className="planetary-container"
-            ref={containerRef}
-            onMouseMove={(e) => {
-                if (!containerRef.current) return;
-                const rect = containerRef.current.getBoundingClientRect();
-                setTooltipPos({
-                    x: e.clientX - rect.left,
-                    y: e.clientY - rect.top,
-                });
-            }}
-            onMouseLeave={() => {
-                // optional: hide tooltip when leaving the whole map
-                setHoveredApp(null);
-                setHoveredEdgeId(null);
-            }}
-        >
+        <div className="planetary-container">
             <svg
                 className="planetary-svg"
                 viewBox={`0 0 ${width} ${height}`}
@@ -687,14 +668,7 @@ function PlanetaryMap({ data, variant = "basic" }) {
 
             {/* Tooltip */}
             {(hoveredAppInfo || hoveredEdgeInfo) && (
-                <div
-                    className="planetary-tooltip"
-                    style={{
-                        left: tooltipPos.x,
-                        top: tooltipPos.y,
-                        transform: "translate(12px, -12px)", // offset a bit from cursor
-                    }}
-                >
+                <div className="planetary-tooltip">
                     {hoveredAppInfo && (
                         <>
                             <div className="planetary-tooltip-header">
