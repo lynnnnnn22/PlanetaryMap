@@ -26,6 +26,7 @@
   overflow: hidden;
   /* max-width: 1400px; */
   width: 100%;
+  max-height: calc(100vh - 120px);
   margin-left: auto;
   margin-right: auto;
 }
@@ -34,10 +35,11 @@
 .planetary-wrapper {
   flex: 1 1 auto;
   display: flex;
-  align-items: stretch;
+  align-items: center;
   justify-content: center;
   padding: 1rem 1.5rem;
   min-width: 0;
+  min-height: 0;
   /* important so SVG can shrink */
 }
 
