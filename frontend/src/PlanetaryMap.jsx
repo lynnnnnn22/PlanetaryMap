@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useRef } from "react";
+import React, { useMemo, useState, useRef , useEffect } from "react";
 import * as d3 from "d3";
 import "./PlanetaryMap.css";
 
@@ -104,12 +104,15 @@ function buildRawTransitions(visualRows, planetByApp, planetRadius) {
 }
 
 // Aggregate transitions by unordered app pair (A<->B)
-function aggregateTransitionsByPair(rawTransitions) {
+function aggregateTransitionsByPair(rawTransitions, minimalPaths = false) {
     const byPair = new Map();
 
     for (const tr of rawTransitions) {
-        const apps = [tr.from.app, tr.to.app].sort();
-        const key = `${apps[0]}<->${apps[1]}`;
+        let key = `${tr.from.app}→${tr.to.app}`;
+        if (minimalPaths == true) {
+            const apps = [tr.from.app, tr.to.app].sort();
+            key = `${apps[0]}<->${apps[1]}`;
+        }
 
         if (!byPair.has(key)) {
             byPair.set(key, {
@@ -151,36 +154,6 @@ function addParallelIndices(transitions) {
         });
     }
     return withIndex;
-}
-
-// Straight path for minimal variant (no wiggle, just offset parallels)
-function straightPath(from, to, fromRadius, toRadius, parallelIndex = 0, parallelCount = 1) {
-    const dx = to.x - from.x;
-    const dy = to.y - from.y;
-    const length = Math.sqrt(dx * dx + dy * dy) || 1;
-
-    // Direction & normal
-    const ux = dx / length;
-    const uy = dy / length;
-    const nx = -uy;
-    const ny = ux;
-
-    // Offset to keep lines from stacking directly on top of each other
-    const offsetScale = 10;
-    const baseOffset = (parallelIndex - (parallelCount - 1) / 2) * offsetScale;
-
-    const startOffset = fromRadius + 8;
-    const endOffset = toRadius + 8;
-
-    const x1 = from.x + ux * startOffset + nx * baseOffset;
-    const y1 = from.y + uy * startOffset + ny * baseOffset;
-    const x2 = to.x - ux * endOffset + nx * baseOffset;
-    const y2 = to.y - uy * endOffset + ny * baseOffset;
-
-    return lineGen([
-        [x1, y1],
-        [x2, y2]
-    ]);
 }
 
 // Wiggly path: friction controls how bumpy; parallels are spread around the base line
@@ -232,7 +205,7 @@ function wigglePath(
     }
 
     const segments = 40;
-    const bumps = friction; // at least one bump
+    const bumps = Math.round(friction); // at least one bump
     const bumpAmplitude = baseAmp < 0 ? -10 : 10
 
     const points = d3.range(segments + 1).map((i) => {
@@ -290,6 +263,10 @@ function pathLabelPosition(from, to, fromRadius, parallelIndex = 0, parallelCoun
 function PlanetaryMap({ data, variant = "basic" }) {
     const [hoveredApp, setHoveredApp] = useState(null);
     const [hoveredEdgeId, setHoveredEdgeId] = useState(null);
+
+    // zoom refs
+    const svgRef = useRef(null);
+    const zoomGroupRef = useRef(null);
 
     const config = VARIANTS[variant] ?? VARIANTS.basic;
 
@@ -373,6 +350,32 @@ function PlanetaryMap({ data, variant = "basic" }) {
     const cx = width / 2;
     const cy = height / 2;
 
+    useEffect(() => {
+        if (!svgRef.current || !zoomGroupRef.current) return;
+
+        const svg = d3.select(svgRef.current);
+        const zoomGroup = d3.select(zoomGroupRef.current);
+
+        // initial transform: center the “world” at cx, cy
+        const initialTransform = d3.zoomIdentity.translate(cx, cy);
+
+        const zoomBehavior = d3
+            .zoom()
+            .scaleExtent([0.4, 4]) // min/max zoom
+            .on("zoom", (event) => {
+            zoomGroup.attr("transform", event.transform.toString());
+            });
+
+        svg.call(zoomBehavior);
+
+        // set initial position
+        svg.call(zoomBehavior.transform, initialTransform);
+
+        return () => {
+            svg.on(".zoom", null);
+        };
+    }, [cx, cy]);
+
     const maxSeconds = d3.max(appTimes, (d) => d.seconds) || 1;
 
     // Planet radius scale (sqrt so big apps don't dominate)
@@ -410,10 +413,10 @@ function PlanetaryMap({ data, variant = "basic" }) {
     const transitions = useMemo(() => {
         let base = rawTransitions;
         if (config.aggregatePaths) {
-            base = aggregateTransitionsByPair(rawTransitions);
+            base = aggregateTransitionsByPair(rawTransitions, config.minimalPaths);
         }
         return addParallelIndices(base);
-    }, [rawTransitions, config.aggregatePaths]);
+    }, [rawTransitions, config.aggregatePaths, config.minimalPaths]);
 
     const highlightedApps = useMemo(() => {
         // If an edge is hovered, highlight exactly its two endpoints
@@ -503,12 +506,13 @@ function PlanetaryMap({ data, variant = "basic" }) {
     return (
         <div className="planetary-container">
             <svg
+                ref={svgRef}
                 className="planetary-svg"
                 viewBox={`0 0 ${width} ${height}`}
                 role="img"
                 aria-label="Planetary map of focused tools and transitions"
             >
-                <g transform={`translate(${cx}, ${cy})`}>
+                <g  ref={zoomGroupRef}>
                     {config.showDirection && (
                         <defs>
                             {transitions.map((t) => {
@@ -566,8 +570,8 @@ function PlanetaryMap({ data, variant = "basic" }) {
                             }
                         }
 
-                        const strokeWidthBase = config.minimalPaths
-                            ? 1 + (t.count || 1) * 0.6
+                        const strokeWidthBase = config.aggregatePaths
+                            ? 3 + (t.count-1 || 0) * 2
                             : 3;
 
                         const strokeWidth = isHoveredEdge ? strokeWidthBase * 1.6 : strokeWidthBase;
@@ -576,7 +580,7 @@ function PlanetaryMap({ data, variant = "basic" }) {
                             ? `url(#edge-grad-${t.id})`
                             : pathColor(t.friction ?? 0);
 
-                        const pathFn = config.minimalPaths ? straightPath : wigglePath;
+                        const pathFn = wigglePath;
 
                         const labelPos = config.numberingPaths
                             ? pathLabelPosition(

@@ -169,150 +169,150 @@ export const eventLogMock = [
         start: "2025-11-15T09:00:00.000Z",
         description: "Search related bug reports and troubleshooting tips"
     },
-    // {
-    //     id: 20,
-    //     type: "TRANSITION",
-    //     from: "Browser",
-    //     to: "IDE",
-    //     duration_sec: 2,
-    //     friction: 0, // Low
-    //     start: "2025-11-15T09:00:00.000Z",
-    //     description: "Path 10: Browser → IDE"
-    // },
-    // {
-    //     id: 21,
-    //     type: "STATE",
-    //     app: "IDE",
-    //     duration_sec: 1020,
-    //     start: "2025-11-15T09:00:00.000Z",
-    //     description: "Fix bug and complete functional implementation"
-    // },
-    // {
-    //     id: 22,
-    //     type: "TRANSITION",
-    //     from: "IDE",
-    //     to: "Spotify",
-    //     duration_sec: 7,
-    //     friction: 3, // Medium-High
-    //     start: "2025-11-15T09:00:00.000Z",
-    //     description: "Path 11: IDE → Spotify"
-    // },
-    // {
-    //     id: 23,
-    //     type: "STATE",
-    //     app: "Spotify",
-    //     duration_sec: 720,
-    //     start: "2025-11-15T09:00:00.000Z",
-    //     description: "Play music to maintain flow"
-    // },
-    // {
-    //     id: 24,
-    //     type: "TRANSITION",
-    //     from: "Spotify",
-    //     to: "IDE",
-    //     duration_sec: 1,
-    //     friction: 0, // Low
-    //     start: "2025-11-15T09:00:00.000Z",
-    //     description: "Path 12: Spotify → IDE"
-    // },
-    // {
-    //     id: 25,
-    //     type: "STATE",
-    //     app: "IDE",
-    //     duration_sec: 600,
-    //     start: "2025-11-15T09:00:00.000Z",
-    //     description: "Finalize feature logic and polish code"
-    // },
-    // {
-    //     id: 26,
-    //     type: "TRANSITION",
-    //     from: "IDE",
-    //     to: "Local Dev",
-    //     duration_sec: 5,
-    //     friction: 2, // Medium
-    //     start: "2025-11-15T09:00:00.000Z",
-    //     description: "Path 13: IDE → Local Dev"
-    // },
-    // {
-    //     id: 27,
-    //     type: "STATE",
-    //     app: "Local Dev",
-    //     duration_sec: 1200,
-    //     start: "2025-11-15T09:00:00.000Z",
-    //     description: "Run tests, validate behavior, verify interactions"
-    // },
-    // {
-    //     id: 28,
-    //     type: "TRANSITION",
-    //     from: "Local Dev",
-    //     to: "IDE",
-    //     duration_sec: 3,
-    //     friction: 1, // Low-Medium
-    //     start: "2025-11-15T09:00:00.000Z",
-    //     description: "Path 14: Local Dev → IDE"
-    // },
-    // {
-    //     id: 29,
-    //     type: "STATE",
-    //     app: "IDE",
-    //     duration_sec: 180,
-    //     start: "2025-11-15T09:00:00.000Z",
-    //     description: "Make final adjustments"
-    // },
-    // {
-    //     id: 30,
-    //     type: "TRANSITION",
-    //     from: "IDE",
-    //     to: "Github",
-    //     duration_sec: 1,
-    //     friction: 0, // Low
-    //     start: "2025-11-15T09:00:00.000Z",
-    //     description: "Path 15: IDE → Github"
-    // },
-    // {
-    //     id: 31,
-    //     type: "STATE",
-    //     app: "Github",
-    //     duration_sec: 540,
-    //     start: "2025-11-15T09:00:00.000Z",
-    //     description: "Commit changes and prepare PR"
-    // },
-    // {
-    //     id: 32,
-    //     type: "TRANSITION",
-    //     from: "Github",
-    //     to: "Browser",
-    //     duration_sec: 2,
-    //     friction: 0, // Low
-    //     start: "2025-11-15T09:00:00.000Z",
-    //     description: "Path 16: Github → Browser"
-    // },
-    // {
-    //     id: 33,
-    //     type: "STATE",
-    //     app: "Browser",
-    //     duration_sec: 480,
-    //     start: "2025-11-15T09:00:00.000Z",
-    //     description: "Review final PR details"
-    // },
-    // {
-    //     id: 34,
-    //     type: "TRANSITION",
-    //     from: "Browser",
-    //     to: "Github",
-    //     duration_sec: 1,
-    //     friction: 0, // Low
-    //     start: "2025-11-15T09:00:00.000Z",
-    //     description: "Path 17: Browser → Github"
-    // },
-    // {
-    //     id: 35,
-    //     type: "STATE",
-    //     app: "Github",
-    //     duration_sec: 300,
-    //     start: "2025-11-15T09:00:00.000Z",
-    //     description: "Submit PR and conclude the task"
-    // }
+    {
+        id: 20,
+        type: "TRANSITION",
+        from: "Browser",
+        to: "IDE",
+        duration_sec: 2,
+        friction: 0, // Low
+        start: "2025-11-15T09:00:00.000Z",
+        description: "Path 10: Browser → IDE"
+    },
+    {
+        id: 21,
+        type: "STATE",
+        app: "IDE",
+        duration_sec: 1020,
+        start: "2025-11-15T09:00:00.000Z",
+        description: "Fix bug and complete functional implementation"
+    },
+    {
+        id: 22,
+        type: "TRANSITION",
+        from: "IDE",
+        to: "Spotify",
+        duration_sec: 7,
+        friction: 3, // Medium-High
+        start: "2025-11-15T09:00:00.000Z",
+        description: "Path 11: IDE → Spotify"
+    },
+    {
+        id: 23,
+        type: "STATE",
+        app: "Spotify",
+        duration_sec: 720,
+        start: "2025-11-15T09:00:00.000Z",
+        description: "Play music to maintain flow"
+    },
+    {
+        id: 24,
+        type: "TRANSITION",
+        from: "Spotify",
+        to: "IDE",
+        duration_sec: 1,
+        friction: 0, // Low
+        start: "2025-11-15T09:00:00.000Z",
+        description: "Path 12: Spotify → IDE"
+    },
+    {
+        id: 25,
+        type: "STATE",
+        app: "IDE",
+        duration_sec: 600,
+        start: "2025-11-15T09:00:00.000Z",
+        description: "Finalize feature logic and polish code"
+    },
+    {
+        id: 26,
+        type: "TRANSITION",
+        from: "IDE",
+        to: "Local Dev",
+        duration_sec: 5,
+        friction: 2, // Medium
+        start: "2025-11-15T09:00:00.000Z",
+        description: "Path 13: IDE → Local Dev"
+    },
+    {
+        id: 27,
+        type: "STATE",
+        app: "Local Dev",
+        duration_sec: 1200,
+        start: "2025-11-15T09:00:00.000Z",
+        description: "Run tests, validate behavior, verify interactions"
+    },
+    {
+        id: 28,
+        type: "TRANSITION",
+        from: "Local Dev",
+        to: "IDE",
+        duration_sec: 3,
+        friction: 1, // Low-Medium
+        start: "2025-11-15T09:00:00.000Z",
+        description: "Path 14: Local Dev → IDE"
+    },
+    {
+        id: 29,
+        type: "STATE",
+        app: "IDE",
+        duration_sec: 180,
+        start: "2025-11-15T09:00:00.000Z",
+        description: "Make final adjustments"
+    },
+    {
+        id: 30,
+        type: "TRANSITION",
+        from: "IDE",
+        to: "Github",
+        duration_sec: 1,
+        friction: 0, // Low
+        start: "2025-11-15T09:00:00.000Z",
+        description: "Path 15: IDE → Github"
+    },
+    {
+        id: 31,
+        type: "STATE",
+        app: "Github",
+        duration_sec: 540,
+        start: "2025-11-15T09:00:00.000Z",
+        description: "Commit changes and prepare PR"
+    },
+    {
+        id: 32,
+        type: "TRANSITION",
+        from: "Github",
+        to: "Browser",
+        duration_sec: 2,
+        friction: 0, // Low
+        start: "2025-11-15T09:00:00.000Z",
+        description: "Path 16: Github → Browser"
+    },
+    {
+        id: 33,
+        type: "STATE",
+        app: "Browser",
+        duration_sec: 480,
+        start: "2025-11-15T09:00:00.000Z",
+        description: "Review final PR details"
+    },
+    {
+        id: 34,
+        type: "TRANSITION",
+        from: "Browser",
+        to: "Github",
+        duration_sec: 1,
+        friction: 0, // Low
+        start: "2025-11-15T09:00:00.000Z",
+        description: "Path 17: Browser → Github"
+    },
+    {
+        id: 35,
+        type: "STATE",
+        app: "Github",
+        duration_sec: 300,
+        start: "2025-11-15T09:00:00.000Z",
+        description: "Submit PR and conclude the task"
+    }
 ];
 
 export default eventLogMock;
