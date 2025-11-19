@@ -65,6 +65,222 @@ const PLANET_PALETTE = [
     "#a3e635"
 ];
 
+
+const LEGENDS = {
+  core: [
+    {
+      id: "planets",
+      label: "Planets",
+      text: [
+        "Tools.",
+        "Size: Proportional to time spent on the tools.",
+        "Colour: Customizable."
+      ]
+    },
+    {
+      id: "paths",
+      label: "Paths",
+      text: [
+        "Transitions between tools.",
+        "Bumps/Waves: Corresponds to friction level.",
+        "Colour: Blue (low friction) → Red (high friction)."
+      ]
+    },
+    {
+      id: "orbits",
+      label: "Orbits",
+      text: [
+        "Hierarchy of tools.",
+        "Defined by you."
+      ]
+    },
+    {
+        id: "hover-tip",
+        label: "Hover to see more info!",
+        text: []
+    }
+  ],
+  basic: [
+    { id: "basic-paths", label: "Paths", text: ["One  per transition."] }
+  ],
+  detailed: [
+    { id: "det-paths", label: "Paths", text: ["One per transition."] },
+    { id: "det-gradient", label: "Gradient", text: ["Bright → faint shows direction."] },
+    { id: "det-numbers", label: "Numbers", text: ["Labels show transition order."] }
+  ],
+  aggregated: [
+    { id: "agg-merge", label: "Merged paths", text: ["Combine all A → B transitions."] },
+    { id: "agg-thick", label: "Thickness", text: ["Thicker = more transitions."] },
+    { id: "agg-gradient", label: "Gradient", text: ["Bright → faint shows direction."] }
+  ],
+  minimal: [
+    { id: "min-pairs", label: "Merged Paths", text: ["One line per tool pair A ↔ B."] },
+    { id: "min-thick", label: "Thickness", text: ["Thicker = more transitions."] }
+  ]
+};
+
+function PlanetaryLegend({ variant, showLegend, onToggle }) {
+  const variantItems = LEGENDS[variant] || [];
+
+  return (
+    <div className={`planetary-legend ${showLegend ? "open" : "collapsed"}`}>
+      {/* Header row (always visible) */}
+      <button className="planetary-legend-header" onClick={onToggle}>
+        <span>Legend</span>
+        <span
+          className={
+            "planetary-legend-chevron " + (showLegend ? "open" : "")
+          }
+        >
+          ▾
+        </span>
+      </button>
+
+      {/* Content only when expanded */}
+      {showLegend && (
+        <div className="planetary-legend-body">
+          {/* Core items */}
+          {LEGENDS.core.map((item) => (
+            <LegendItem key={item.id} item={item} />
+          ))}
+
+          {/* Mode-specific items */}
+          {variantItems.length > 0 && (
+            <>
+              <div className="planetary-legend-divider" />
+              <div className="planetary-legend-mode-label">
+                Mode: {variant.charAt(0).toUpperCase() + variant.slice(1)}
+              </div>
+              {variantItems.map((item) => (
+                <LegendItem key={item.id} item={item} />
+              ))}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function LegendItem({ item }) {
+  const isCore = item.id === "planets" || item.id === "paths" || item.id === "orbits";
+
+  return (
+    <div className="planetary-legend-item">
+      {/* Icon for core items; nothing for the rest */}
+      {isCore ? (
+        <div className="planetary-legend-icon">
+          <PlanetaryLegendIcon id={item.id} />
+        </div>
+      ) : (
+        <div className="planetary-legend-icon planetary-legend-icon--empty" />
+      )}
+      <div className="planetary-legend-text">
+        <div className="planetary-legend-line">
+          <span className="planetary-legend-label-bold">{item.label}</span>
+          {item.text[0] ?  <span className="planetary-legend-dash"> — </span> : null}
+          
+          <span className="planetary-legend-description">
+            {Array.isArray(item.text) ? item.text[0] : item.text}
+          </span>
+        </div>
+
+        {/* Additional lines, if any */}
+        {Array.isArray(item.text) && item.text.length > 1 && (
+          <div className="planetary-legend-multiline">
+            {item.text.slice(1).map((line, i) => (
+              <div className="planetary-legend-description" key={i}>
+                {line}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function PlanetaryLegendIcon({ id }) {
+  // Small 18×18 inline SVGs
+  const size = 18;
+
+  if (id === "planets") {
+    // Circle planet
+    return (
+      <svg
+        className="planetary-legend-icon-svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+      >
+        <circle cx="12" cy="12" r="7" fill="#38bdf8" opacity="0.9" />
+      </svg>
+    );
+  }
+
+  if (id === "paths") {
+    // Wiggly path
+    return (
+      <svg
+        className="planetary-legend-icon-svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+      >
+        <path
+          d=" M3 12
+          C 7 12, 9 8, 12 8
+          C 15 8, 17 12, 21 12"
+          fill="none"
+          stroke="#9be7ff"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+        />
+      </svg>
+    );
+  }
+
+  if (id === "orbits") {
+    // Concentric orbits
+    return (
+      <svg
+        className="planetary-legend-icon-svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="3"
+          fill="#e5e7eb"
+          opacity="0.9"
+        />
+        <circle
+          cx="12"
+          cy="12"
+          r="7"
+          fill="none"
+          stroke="#64748b"
+          strokeWidth="1.2"
+        />
+        <circle
+          cx="12"
+          cy="12"
+          r="10.5"
+          fill="none"
+          stroke="#475569"
+          strokeWidth="0.9"
+          strokeDasharray="2 3"
+        />
+      </svg>
+    );
+  }
+
+  // Default: no icon (for mode-specific items)
+  return null;
+}
+
 // Shared line generator used by the wiggly path
 const lineGen = d3.line().curve(d3.curveNatural);
 
@@ -263,6 +479,7 @@ function pathLabelPosition(from, to, fromRadius, parallelIndex = 0, parallelCoun
 function PlanetaryMap({ data, variant = "basic" }) {
     const [hoveredApp, setHoveredApp] = useState(null);
     const [hoveredEdgeId, setHoveredEdgeId] = useState(null);
+    const [showLegend, setShowLegend] = useState(true);
 
     // zoom refs
     const svgRef = useRef(null);
@@ -347,7 +564,7 @@ function PlanetaryMap({ data, variant = "basic" }) {
     // Layout & scales
     const width = 1000;
     const height = 800;
-    const cx = width / 2;
+    const cx = width / 2.5;
     const cy = height / 2;
 
     useEffect(() => {
@@ -401,8 +618,6 @@ function PlanetaryMap({ data, variant = "basic" }) {
                 .range(["#9be7ff", "#ff6b6b"]),
         []
     );
-
-    const frictionStrokeWidth = (f) => 2 + (f || 0); // 2–6 px
 
     // 5. Build transitions with variant-aware transforms
     const rawTransitions = useMemo(
@@ -734,6 +949,12 @@ function PlanetaryMap({ data, variant = "basic" }) {
                     )}
                 </div>
             )}
+
+            <PlanetaryLegend
+                variant={variant}
+                showLegend={showLegend}
+                onToggle={() => setShowLegend((v) => !v)}
+            />
         </div>
     );
 }

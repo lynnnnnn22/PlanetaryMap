@@ -175,3 +175,156 @@
     border-top: 1px solid rgba(148, 163, 184, 0.4);
     margin: 0.5rem 0;
 }
+
+.planetary-legend {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: clamp(180px, 20vw, 350px);
+    height: auto;
+    min-width: 220px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    color: #e5e7eb;
+    font-size: clamp(12px, 1vw, 20px);
+    backdrop-filter: blur(8px);
+
+  pointer-events: none; /* important: don't block map interactions */
+}
+
+/* Let header be clickable */
+.planetary-legend-header {
+  pointer-events: auto; /* re-enable click just on header */
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0 0 0.25rem 0;
+
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.planetary-legend-header:hover {
+  color: #ffffff;
+}
+
+.planetary-legend-chevron {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.planetary-legend-chevron.open {
+  transform: rotate(180deg);
+}
+
+/* Body scroll if it ever gets tall */
+.planetary-legend-body {
+  pointer-events: auto; /* allows text selection if needed */
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+/* Optional: slightly smaller pill when collapsed */
+.planetary-legend.collapsed {
+  max-width: 120px;
+  padding: 0.35rem 0.6rem;
+}
+
+.planetary-legend-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+  margin-bottom: 0.35rem;
+}
+
+.planetary-legend-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin-bottom: 0.3rem;
+}
+
+.planetary-legend-item:last-child {
+  margin-bottom: 0;
+}
+
+.planetary-legend-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.planetary-legend-icon--empty {
+  opacity: 0; /* keeps alignment for mode items without icon */
+}
+
+.planetary-legend-icon-svg {
+  display: block;
+}
+
+.planetary-legend-text {
+  flex: 1;
+}
+
+.planetary-legend-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #e5e7eb;
+}
+
+.planetary-legend-description {
+  font-size: 0.72rem;
+  color: #9ca3af;
+}
+
+.planetary-legend-divider {
+  border-top: 1px solid rgba(148, 163, 184, 0.35);
+  margin: 0.4rem 0 0.3rem;
+}
+
+.planetary-legend-mode-label {
+  font-size: 0.72rem;
+  color: #9ca3af;
+  margin-bottom: 0.25rem;
+}
+
+.planetary-legend-line {
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  margin-bottom: 0.1rem;
+}
+
+.planetary-legend-label-bold {
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.planetary-legend-dash {
+  margin: 0 0.25rem;
+  color: #9ca3af;
+}
+
+.planetary-legend-description {
+  font-size: 0.74rem;
+  color: #9ca3af;
+}
+
+.planetary-legend-multiline {
+  margin-left: 0.6rem; /* indent for secondary lines */
+}
