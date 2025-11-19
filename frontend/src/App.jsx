@@ -12,6 +12,7 @@ const VARIANT_OPTIONS = [
 
 function App() {
   const [variant, setVariant] = useState("basic");
+  const [showModeSection, setShowModeSection] = useState(true);
 
   return (
     <div className="app-root">
@@ -29,61 +30,77 @@ function App() {
         <aside className="app-settings-sidebar">
           <h2 className="app-settings-title">View Settings</h2>
 
-          <div className="app-settings-section">
-            <p className="app-settings-label">Mode</p>
-            <div className="app-variant-buttons">
-              {VARIANT_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  className={
-                    "app-variant-button" +
-                    (variant === opt.value ? " app-variant-button--active" : "")
-                  }
-                  onClick={() => setVariant(opt.value)}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </div>
+          <div className="app-settings-section app-settings-mode">
+            {/* Toggle header */}
+            <button
+              className="mode-toggle-header"
+              onClick={() => setShowModeSection((v) => !v)}
+            >
+              <span>Mode</span>
+              <span className={`mode-toggle-icon ${showModeSection ? "open" : ""}`}>
+                ▾
+              </span>
+            </button>
 
-          <div className="app-settings-section app-settings-description">
-            {variant === "basic" && (
-              <>
-                <h3>Basic</h3>
-                <p>
-                  Shows individual transitions between tools as wiggly paths.
-                  Planet size = time spent.
-                </p>
-              </>
-            )}
-            {variant === "detailed" && (
-              <>
-                <h3>Detailed</h3>
-                <p>
-                  Emphasizes friction using path color and thickness, useful for
-                  spotting moments of struggle.
-                </p>
-              </>
-            )}
-            {variant === "aggregated" && (
-              <>
-                <h3>Aggregated</h3>
-                <p>
-                  Combines repeated transitions between the same tools into a
-                  single, stronger path.
-                </p>
-              </>
-            )}
-            {variant === "minimal" && (
-              <>
-                <h3>Minimal</h3>
-                <p>
-                  Strips away labels and wiggles to show only thick, undirected
-                  lines between frequently paired tools.
-                </p>
-              </>
+            {showModeSection && (
+              <div className="mode-toggle-content">
+                {/* Mode buttons */}
+                <div className="app-variant-buttons">
+                  {VARIANT_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      className={
+                        "app-variant-button" +
+                        (variant === opt.value ? " app-variant-button--active" : "")
+                      }
+                      onClick={() => setVariant(opt.value)}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Mode description (what you already had) */}
+                <div className="app-settings-description-inner">
+                  {variant === "basic" && (
+                    <>
+                      <h3>Basic</h3>
+                      <p>
+                        A clean overview.
+                        Shows transitions between tools as wiggly paths.
+                      </p>
+                    </>
+                  )}
+                  {variant === "detailed" && (
+                    <>
+                      <h3>Detailed</h3>
+                      <p>
+                        A more informative view.
+                        Emphasized directionality and sequence of transitions.
+                      </p>
+                    </>
+                  )}
+                  {variant === "aggregated" && (
+                    <>
+                      <h3>Aggregated</h3>
+                      <p>
+                        A summarized view.
+                        Combines repeated, directioned transitions into a single, stronger path.
+                      </p>
+                    </>
+                  )}
+                  {variant === "minimal" && (
+                    <>
+                      <h3>Minimal</h3>
+                      <p>
+                        A simplified view.
+                        Combines transitions between tool pairs into a single undirected path.
+                      </p>
+                    </>
+                  )}
+                </div>
+              </div>
             )}
           </div>
         </aside>
