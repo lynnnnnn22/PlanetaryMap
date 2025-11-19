@@ -96,7 +96,18 @@
     text-anchor: middle;
     dominant-baseline: middle;
     pointer-events: none;
+    transition: opacity 0.2s ease;
     opacity: 0.85;
+}
+
+.planetary-path-label--dim {
+    opacity: 0.15;
+    /* dimmed */
+}
+
+.planetary-path-label--active {
+    opacity: 1;
+    /* full strength */
 }
 
 /* Planet labels */

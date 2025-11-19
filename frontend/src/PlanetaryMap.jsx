@@ -9,9 +9,9 @@ import "./PlanetaryMap.css";
 // If you want to re-enable "last X hours" filtering later
 const TIME_WINDOW_HOURS = 6; // currently unused (see commented code below)
 
-const ORBIT_COUNT = 4; // always draw 4 orbits
-const BASE_ORBIT_RADIUS = 80;
-const ORBIT_STEP = 100;
+const ORBIT_COUNT = 3; // always draw 3 orbits
+const BASE_ORBIT_RADIUS = 100;
+const ORBIT_STEP = 120;
 
 // Visual behavior per variant
 const VARIANTS = {
@@ -523,8 +523,8 @@ function PlanetaryMap({ data, variant = "basic" }) {
                                         y2={t.to.y}
                                         gradientUnits="userSpaceOnUse"
                                     >
-                                        <stop offset="0%" stopColor={color} stopOpacity={1} />
-                                        <stop offset="100%" stopColor={color} stopOpacity={0} />
+                                        <stop offset="35%" stopColor={color} stopOpacity={1} />
+                                        <stop offset="80%" stopColor={color} stopOpacity={0.1} />
                                     </linearGradient>
                                 );
                             })}
@@ -556,6 +556,14 @@ function PlanetaryMap({ data, variant = "basic" }) {
                             classes.push(
                                 isHoveredEdge ? "planetary-edge--hover" : "planetary-edge--dim"
                             );
+                        }
+                        const labelClasses = ["planetary-path-label"];
+                        if (hoveredApp || hoveredEdgeId != null) {
+                            if (isHoveredEdge || isConnected) {
+                                labelClasses.push("planetary-path-label--active");
+                            } else {
+                                labelClasses.push("planetary-path-label--dim");
+                            }
                         }
 
                         const strokeWidthBase = config.minimalPaths
@@ -603,7 +611,7 @@ function PlanetaryMap({ data, variant = "basic" }) {
                                 />
                                 {config.numberingPaths && labelPos && (
                                     <text
-                                        className="planetary-path-label"
+                                        className={labelClasses.join(" ")}
                                         x={labelPos.x}
                                         y={labelPos.y}
                                     >
