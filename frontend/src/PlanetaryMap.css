@@ -188,7 +188,7 @@
     background: rgba(15, 23, 42, 0.9);
     border: 1px solid rgba(148, 163, 184, 0.6);
     color: #e5e7eb;
-    font-size: clamp(12px, 1vw, 20px);
+    font-size: clamp(12px, 1vw, 15px);
     backdrop-filter: blur(8px);
 
   pointer-events: none; /* important: don't block map interactions */
@@ -198,6 +198,7 @@
 .planetary-legend-header {
   pointer-events: auto; /* re-enable click just on header */
   width: 100%;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -208,7 +209,7 @@
   margin: 0 0 0.25rem 0;
 
   color: #e5e7eb;
-  font-size: 0.9rem;
+  font-size: clamp(12px, 1.2vw, 18px);
   font-weight: 600;
   text-align: left;
   cursor: pointer;
@@ -241,7 +242,7 @@
 }
 
 .planetary-legend-title {
-  font-size: 0.8rem;
+  /* font-size: 0.8rem; */
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -287,18 +288,13 @@
   color: #e5e7eb;
 }
 
-.planetary-legend-description {
-  font-size: 0.72rem;
-  color: #9ca3af;
-}
-
 .planetary-legend-divider {
   border-top: 1px solid rgba(148, 163, 184, 0.35);
   margin: 0.4rem 0 0.3rem;
 }
 
 .planetary-legend-mode-label {
-  font-size: 0.72rem;
+  /* font-size: 0.72rem; */
   color: #9ca3af;
   margin-bottom: 0.25rem;
 }
@@ -306,7 +302,7 @@
 .planetary-legend-line {
   display: flex;
   flex-wrap: wrap;
-  font-size: 0.78rem;
+  /* font-size: 0.78rem; */
   margin-bottom: 0.1rem;
 }
 
@@ -321,7 +317,7 @@
 }
 
 .planetary-legend-description {
-  font-size: 0.74rem;
+  /* font-size: 0.74rem; */
   color: #9ca3af;
 }
 

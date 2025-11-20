@@ -45,27 +45,6 @@ const VARIANTS = {
     }
 };
 
-// Palette for planets
-const PLANET_PALETTE = [
-    "#f97316",
-    "#22c55e",
-    "#06b6d4",
-    "#6366f1",
-    "#ec4899",
-    "#facc15",
-    "#4ade80",
-    "#2dd4bf",
-    "#38bdf8",
-    "#818cf8",
-    "#c4b5fd",
-    "#f9a8d4",
-    "#fb923c",
-    "#22c55e",
-    "#06b6d4",
-    "#a3e635"
-];
-
-
 const LEGENDS = {
   core: [
     {
@@ -476,7 +455,7 @@ function pathLabelPosition(from, to, fromRadius, parallelIndex = 0, parallelCoun
 // Main component
 // ------------------------------------------------------
 
-function PlanetaryMap({ data, variant = "basic" }) {
+function PlanetaryMap({ data, variant = "basic", appColors = {}, appOrbits = {}, timeWindowHours = null }) {
     const [hoveredApp, setHoveredApp] = useState(null);
     const [hoveredEdgeId, setHoveredEdgeId] = useState(null);
     const [showLegend, setShowLegend] = useState(true);
@@ -488,28 +467,7 @@ function PlanetaryMap({ data, variant = "basic" }) {
     const config = VARIANTS[variant] ?? VARIANTS.basic;
 
     // 1. Filter out AFK so it never appears as a planet or path endpoint
-    const visualRows = useMemo(
-        () =>
-            (data || []).filter(
-                (row) =>
-                    row.app !== "AFK" &&
-                    row.from !== "AFK" &&
-                    row.to !== "AFK"
-            ),
-        [data]
-    );
-
-    // (Optional) Time window filtering if you want:
-    // const visualRows = useMemo(() => {
-    //   const now = Date.now();
-    //   const cutoff = now - TIME_WINDOW_HOURS * 60 * 60 * 1000;
-    //   return (data || []).filter((row) => {
-    //     if (row.app === "AFK" || row.from === "AFK" || row.to === "AFK") return false;
-    //     if (row.type !== "STATE") return true;
-    //     const startTime = new Date(row.start).getTime();
-    //     return startTime >= cutoff;
-    //   });
-    // }, [data]);
+    const visualRows = useMemo(() => data || [], [data]);
 
     // 2. Aggregate time per app
     const appTimes = useMemo(
@@ -521,11 +479,24 @@ function PlanetaryMap({ data, variant = "basic" }) {
     const orbitAssignments = useMemo(() => {
         const sorted = [...appTimes].sort((a, b) => b.seconds - a.seconds);
         const limited = sorted.slice(0, 12);
-        return limited.map((d, i) => ({
-            ...d,
-            orbit: Math.floor(i / 3) // 0-inner, 1-next, etc. (3 planets per orbit)
-        }));
-    }, [appTimes]);
+
+        return limited.map((d, i) => {
+            const defaultOrbit = Math.floor(i / 3); // 0-inner, 1-middle, 2-outer
+            const customOrbit = appOrbits[d.app];
+
+            let orbit = defaultOrbit;
+            if (typeof customOrbit === "number" &&
+                customOrbit >= 0 &&
+                customOrbit < ORBIT_COUNT) {
+                orbit = customOrbit;
+            }
+
+            return {
+                ...d,
+                orbit
+            };
+        });
+    }, [appTimes, appOrbits]);
 
     // 4. Compute planet positions (radial layout)
     const planets = useMemo(() => {
@@ -553,13 +524,13 @@ function PlanetaryMap({ data, variant = "basic" }) {
 
     const planetColorByApp = useMemo(() => {
         const map = new Map();
-        const uniqueApps = Array.from(new Set(planets.map((p) => p.app))).sort();
-
-        uniqueApps.forEach((app, idx) => {
-            map.set(app, PLANET_PALETTE[idx % PLANET_PALETTE.length]);
+        planets.forEach((p) => {
+            // appColors comes from App and already includes palette + overrides
+            const color = appColors[p.app] || "#6bdcff";
+            map.set(p.app, color);
         });
         return map;
-    }, [planets]);
+    }, [planets, appColors]);
 
     // Layout & scales
     const width = 1000;
