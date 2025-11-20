@@ -96,7 +96,7 @@ const LEGENDS = {
     },
     {
         id: "hover-tip",
-        label: "Hover to see more info!",
+        label: "👆 Hover to see more info!",
         text: []
     }
   ],
