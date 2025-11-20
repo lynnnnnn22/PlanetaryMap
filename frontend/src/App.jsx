@@ -4,6 +4,8 @@ import PlanetaryMap from "./PlanetaryMap";
 import eventLogMock from "./mockdata/mock_eventlog";
 import "./App.css";
 
+const FAKE_NOW = "2025-11-15T11:52:01.000Z";
+
 const VARIANT_OPTIONS = [
   { value: "basic", label: "Basic" },
   { value: "detailed", label: "Detailed" },
@@ -101,7 +103,8 @@ function App() {
     }
 
     // 3. Filter STATE rows by start time; let TRANSITION rows pass through
-    const now = Date.now();
+    // const now = Date.now();
+    const now = new Date(FAKE_NOW);
     const cutoff = now - timeWindowHours * 60 * 60 * 1000;
 
     return base.filter((row) => {

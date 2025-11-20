@@ -14,7 +14,7 @@ export const eventLogMock = [
         to: "IDE",
         duration_sec: 2,
         friction: 0, // Low
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T09:07:00.000Z",
         description: "Path 1: Github → IDE"
     },
     {
@@ -22,7 +22,7 @@ export const eventLogMock = [
         type: "STATE",
         app: "IDE",
         duration_sec: 600,
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T09:07:02.000Z",
         description: "Set up project environment and load relevant files"
     },
     {
@@ -32,7 +32,7 @@ export const eventLogMock = [
         to: "Browser",
         duration_sec: 4,
         friction: 1, // Low-Medium
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T09:17:02.000Z",
         description: "Path 2: IDE → Browser"
     },
     {
@@ -40,7 +40,7 @@ export const eventLogMock = [
         type: "STATE",
         app: "Browser",
         duration_sec: 180,
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T09:17:06.000Z",
         description: "Reference UI library documentation"
     },
     {
@@ -50,7 +50,7 @@ export const eventLogMock = [
         to: "IDE",
         duration_sec: 1,
         friction: 0, // Low
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T09:20:06.000Z",
         description: "Path 3: Browser → IDE"
     },
     {
@@ -58,7 +58,7 @@ export const eventLogMock = [
         type: "STATE",
         app: "IDE",
         duration_sec: 900,
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T09:20:07.000Z",
         description: "Implement initial layout and component structure"
     },
     {
@@ -68,7 +68,7 @@ export const eventLogMock = [
         to: "Figma",
         duration_sec: 6,
         friction: 2, // Medium
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T09:35:07.000Z",
         description: "Path 4: IDE → Figma"
     },
     {
@@ -76,7 +76,7 @@ export const eventLogMock = [
         type: "STATE",
         app: "Figma",
         duration_sec: 480,
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T09:35:13.000Z",
         description: "Inspect design specs and spacing details"
     },
     {
@@ -86,7 +86,7 @@ export const eventLogMock = [
         to: "IDE",
         duration_sec: 3,
         friction: 1, // Low-Medium
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T09:43:13.000Z",
         description: "Path 5: Figma → IDE"
     },
     {
@@ -94,7 +94,7 @@ export const eventLogMock = [
         type: "STATE",
         app: "IDE",
         duration_sec: 540,
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T09:43:16.000Z",
         description: "Refine styling and responsive rules"
     },
     {
@@ -104,7 +104,7 @@ export const eventLogMock = [
         to: "Slack",
         duration_sec: 8,
         friction: 3, // Medium-High
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T09:52:16.000Z",
         description: "Path 6: IDE → Slack"
     },
     {
@@ -112,7 +112,7 @@ export const eventLogMock = [
         type: "STATE",
         app: "Slack",
         duration_sec: 240,
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T09:52:24.000Z",
         description: "Ask designer about unexpected spacing mismatch"
     },
     {
@@ -122,7 +122,7 @@ export const eventLogMock = [
         to: "IDE",
         duration_sec: 3,
         friction: 1, // Low-Medium
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T09:56:24.000Z",
         description: "Path 7: Slack → IDE"
     },
     {
@@ -130,7 +130,7 @@ export const eventLogMock = [
         type: "STATE",
         app: "IDE",
         duration_sec: 300,
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T09:56:27.000Z",
         description: "Apply clarified spacing updates"
     },
     {
@@ -140,7 +140,7 @@ export const eventLogMock = [
         to: "LLM",
         duration_sec: 10,
         friction: 4, // High
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T10:01:27.000Z",
         description: "Path 8: IDE → LLM"
     },
     {
@@ -148,7 +148,7 @@ export const eventLogMock = [
         type: "STATE",
         app: "LLM",
         duration_sec: 900,
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T10:01:37.000Z",
         description: "Ask for assistance debugging async rendering issue"
     },
     {
@@ -158,7 +158,7 @@ export const eventLogMock = [
         to: "Browser",
         duration_sec: 2,
         friction: 0, // Low
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T10:16:37.000Z",
         description: "Path 9: LLM → Browser"
     },
     {
@@ -166,7 +166,7 @@ export const eventLogMock = [
         type: "STATE",
         app: "Browser",
         duration_sec: 360,
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T10:16:39.000Z",
         description: "Search related bug reports and troubleshooting tips"
     },
     {
@@ -176,7 +176,7 @@ export const eventLogMock = [
         to: "IDE",
         duration_sec: 2,
         friction: 0, // Low
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T10:22:39.000Z",
         description: "Path 10: Browser → IDE"
     },
     {
@@ -184,7 +184,7 @@ export const eventLogMock = [
         type: "STATE",
         app: "IDE",
         duration_sec: 1020,
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T10:22:41.000Z",
         description: "Fix bug and complete functional implementation"
     },
     {
@@ -194,7 +194,7 @@ export const eventLogMock = [
         to: "Spotify",
         duration_sec: 7,
         friction: 3, // Medium-High
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T10:39:41.000Z",
         description: "Path 11: IDE → Spotify"
     },
     {
@@ -202,7 +202,7 @@ export const eventLogMock = [
         type: "STATE",
         app: "Spotify",
         duration_sec: 720,
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T10:39:48.000Z",
         description: "Play music to maintain flow"
     },
     {
@@ -212,7 +212,7 @@ export const eventLogMock = [
         to: "IDE",
         duration_sec: 1,
         friction: 0, // Low
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T10:51:48.000Z",
         description: "Path 12: Spotify → IDE"
     },
     {
@@ -220,7 +220,7 @@ export const eventLogMock = [
         type: "STATE",
         app: "IDE",
         duration_sec: 600,
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T10:51:49.000Z",
         description: "Finalize feature logic and polish code"
     },
     {
@@ -230,7 +230,7 @@ export const eventLogMock = [
         to: "Local Dev",
         duration_sec: 5,
         friction: 2, // Medium
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T11:01:49.000Z",
         description: "Path 13: IDE → Local Dev"
     },
     {
@@ -238,7 +238,7 @@ export const eventLogMock = [
         type: "STATE",
         app: "Local Dev",
         duration_sec: 1200,
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T11:01:54.000Z",
         description: "Run tests, validate behavior, verify interactions"
     },
     {
@@ -248,7 +248,7 @@ export const eventLogMock = [
         to: "IDE",
         duration_sec: 3,
         friction: 1, // Low-Medium
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T11:21:54.000Z",
         description: "Path 14: Local Dev → IDE"
     },
     {
@@ -256,7 +256,7 @@ export const eventLogMock = [
         type: "STATE",
         app: "IDE",
         duration_sec: 180,
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T11:21:57.000Z",
         description: "Make final adjustments"
     },
     {
@@ -266,7 +266,7 @@ export const eventLogMock = [
         to: "Github",
         duration_sec: 1,
         friction: 0, // Low
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T11:24:57.000Z",
         description: "Path 15: IDE → Github"
     },
     {
@@ -274,7 +274,7 @@ export const eventLogMock = [
         type: "STATE",
         app: "Github",
         duration_sec: 540,
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T11:24:58.000Z",
         description: "Commit changes and prepare PR"
     },
     {
@@ -284,7 +284,7 @@ export const eventLogMock = [
         to: "Browser",
         duration_sec: 2,
         friction: 0, // Low
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T11:33:58.000Z",
         description: "Path 16: Github → Browser"
     },
     {
@@ -292,7 +292,7 @@ export const eventLogMock = [
         type: "STATE",
         app: "Browser",
         duration_sec: 480,
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T11:34:00.000Z",
         description: "Review final PR details"
     },
     {
@@ -302,7 +302,7 @@ export const eventLogMock = [
         to: "Github",
         duration_sec: 1,
         friction: 0, // Low
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T11:42:00.000Z",
         description: "Path 17: Browser → Github"
     },
     {
@@ -310,7 +310,7 @@ export const eventLogMock = [
         type: "STATE",
         app: "Github",
         duration_sec: 300,
-        start: "2025-11-15T09:00:00.000Z",
+        start: "2025-11-15T11:42:01.000Z",
         description: "Submit PR and conclude the task"
     }
 ];

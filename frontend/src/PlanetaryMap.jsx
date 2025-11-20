@@ -6,9 +6,6 @@ import "./PlanetaryMap.css";
 // CONFIG
 // ------------------------------------------------------
 
-// If you want to re-enable "last X hours" filtering later
-const TIME_WINDOW_HOURS = 6; // currently unused (see commented code below)
-
 const ORBIT_COUNT = 3; // always draw 3 orbits
 const BASE_ORBIT_RADIUS = 100;
 const ORBIT_STEP = 120;
