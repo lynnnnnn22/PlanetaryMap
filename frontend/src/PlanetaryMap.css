@@ -49,8 +49,8 @@
 
 /* Planet circles */
 .planetary-planet {
-    stroke: #cfefff;
-    stroke-width: 1px;
+    /* stroke: #cfefff;
+    stroke-width: 1px; */
     transition:
         stroke 0.2s ease,
         stroke-width 0.2s ease,
@@ -59,7 +59,7 @@
 }
 
 .planetary-planet--active {
-    stroke-width: 4px;
+    /* stroke-width: 4px; */
     filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.9));
     transform: scale(1.06);
 }
@@ -131,7 +131,7 @@
 /* Info panel for hovered planet */
 .planetary-tooltip {
     position: absolute;
-    top: 16px;
+    bottom: 16px;
     right: 16px;
     width: clamp(180px, 15vw, 350px);
     height: auto;
@@ -178,7 +178,7 @@
 
 .planetary-legend {
     position: absolute;
-    bottom: 16px;
+    top: 16px;
     right: 16px;
     width: clamp(180px, 20vw, 350px);
     height: auto;
