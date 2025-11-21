@@ -478,6 +478,7 @@ function PlanetaryMap({ data, variant = "basic", appColors = {}, appOrbits = {},
     const [hoveredEdgeId, setHoveredEdgeId] = useState(null);
     const [hoveredOrbit, setHoveredOrbit] = useState(null);
     const [showLegend, setShowLegend] = useState(true);
+    const [dragPositions, setDragPositions] = useState({});
 
     // zoom refs
     const svgRef = useRef(null);
@@ -517,6 +518,10 @@ function PlanetaryMap({ data, variant = "basic", appColors = {}, appOrbits = {},
         });
     }, [appTimes, appOrbits]);
 
+    useEffect(() => {
+        setDragPositions({});
+    }, [orbitAssignments]);
+
     // 4. Compute planet positions (radial layout)
     const planets = useMemo(() => {
         const grouped = d3.group(orbitAssignments, (d) => d.orbit);
@@ -527,13 +532,19 @@ function PlanetaryMap({ data, variant = "basic", appColors = {}, appOrbits = {},
             const n = items.length;
             items.forEach((d, i) => {
                 const angle = (i / n) * 2 * Math.PI + (orbit * Math.PI) / 6;
-                const x = Math.cos(angle) * r;
-                const y = Math.sin(angle) * r;
+                const defaultX = Math.cos(angle) * r;
+                const defaultY = Math.sin(angle) * r;
+
+                const override = dragPositions[d.app];
+
+                const x = override?.x ?? defaultX;
+                const y = override?.y ?? defaultY;
+
                 result.push({ ...d, x, y, orbitRadius: r });
             });
         }
         return result;
-    }, [orbitAssignments]);
+    }, [orbitAssignments, dragPositions]);
 
     const planetByApp = useMemo(() => {
         const m = new Map();
@@ -582,6 +593,50 @@ function PlanetaryMap({ data, variant = "basic", appColors = {}, appOrbits = {},
             svg.on(".zoom", null);
         };
     }, [cx, cy]);
+
+    useEffect(() => {
+        if (!svgRef.current || !zoomGroupRef.current) return;
+
+        const svg = d3.select(svgRef.current);
+        const zoomGroup = d3.select(zoomGroupRef.current);
+
+        const dragBehavior = d3
+        .drag()
+        .subject((event, d) => d)
+        .on("start", (event) => {
+            event.sourceEvent?.stopPropagation();
+        })
+        .on("drag", (event) => {
+            const d = event.subject;
+            if (!d) return;
+
+            // Pointer coords in the same coordinate system as your planets
+            const [wx, wy] = d3.pointer(event, zoomGroupRef.current);
+
+            // Keep planet on its orbit ring
+            const angle = Math.atan2(wy, wx);
+            const r = d.orbitRadius;
+
+            const newX = Math.cos(angle) * r;
+            const newY = Math.sin(angle) * r;
+
+            setDragPositions((prev) => ({
+            ...prev,
+            [d.app]: { x: newX, y: newY },
+            }));
+        });
+
+        const selection = d3
+        .select(zoomGroupRef.current)
+        .selectAll(".planetary-planet-node")
+        .data(planets);
+
+        selection.call(dragBehavior);
+
+        return () => {
+            selection.on(".drag", null);
+        };
+        }, [planets, setDragPositions]);
 
     const maxSeconds = d3.max(appTimes, (d) => d.seconds) || 1;
 
@@ -881,7 +936,8 @@ function PlanetaryMap({ data, variant = "basic", appColors = {}, appOrbits = {},
 
                         return (
                             <g
-                                key={i}
+                                key={p.app}
+                                className="planetary-planet-node"
                                 transform={`translate(${p.x}, ${p.y})`}
                                 onMouseEnter={() => setHoveredApp(p.app)}
                                 onMouseLeave={() => setHoveredApp(null)}
