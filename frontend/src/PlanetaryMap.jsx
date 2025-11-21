@@ -7,8 +7,8 @@ import "./PlanetaryMap.css";
 // ------------------------------------------------------
 
 const ORBIT_COUNT = 3; // always draw 3 orbits
-const BASE_ORBIT_RADIUS = 100;
-const ORBIT_STEP = 120;
+const BASE_ORBIT_RADIUS = 80;
+const ORBIT_STEP = 150;
 
 // Visual behavior per variant
 const VARIANTS = {
@@ -48,7 +48,7 @@ const LEGENDS = {
       id: "planets",
       label: "Planets",
       text: [
-        "Tools.",
+        "Tools/Applications.",
         "Size: Proportional to time spent on the tools.",
         "Colour: Customizable."
       ]
@@ -86,12 +86,12 @@ const LEGENDS = {
   ],
   aggregated: [
     { id: "agg-merge", label: "Merged paths", text: ["Combine all A → B transitions."] },
-    { id: "agg-thick", label: "Thickness", text: ["Thicker = more transitions."] },
+    { id: "agg-thick", label: "Thickness", text: ["Proportional to total number of traverses on a path."] },
     { id: "agg-gradient", label: "Gradient", text: ["Bright → faint shows direction."] }
   ],
   minimal: [
     { id: "min-pairs", label: "Merged Paths", text: ["One line per tool pair A ↔ B."] },
-    { id: "min-thick", label: "Thickness", text: ["Thicker = more transitions."] }
+    { id: "min-thick", label: "Thickness", text: ["Proportional to total number of traverses on a path."] }
   ]
 };
 
@@ -260,19 +260,19 @@ function PlanetaryLegendIcon({ id }) {
 const ORBIT_INFO = [
     {
         id: 0,
-        title: "Tier 1 – Essential applications",
+        title: "Orbit 1 - Essential applications",
         description:
             "Core tools you cannot complete the task without; you spend most of your active working time here."
     },
     {
         id: 1,
-        title: "Tier 2 – Supporting applications",
+        title: "Orbit 2 - Supporting applications",
         description:
             "Secondary tools that support your work; not always necessary but frequently used to aid completion."
     },
     {
         id: 2,
-        title: "Tier 3 – Peripheral applications",
+        title: "Orbit 3 - Peripheral applications",
         description:
             "Applications not directly required for the task, often used during breaks or in parallel with work."
     }
@@ -954,12 +954,14 @@ function PlanetaryMap({ data, variant = "basic", appColors = {}, appOrbits = {},
                                     Path: {hoveredEdgeInfo.from} → {hoveredEdgeInfo.to}
                                 </span>
                             </div>
+                            {config.aggregatePaths && (
+                                <div className="planetary-tooltip-row">
+                                    <span>Traverses on this path:</span>
+                                    <span>{hoveredEdgeInfo.count}</span>
+                                </div>
+                            )}
                             <div className="planetary-tooltip-row">
-                                <span>Transitions on this path:</span>
-                                <span>{hoveredEdgeInfo.count}</span>
-                            </div>
-                            <div className="planetary-tooltip-row">
-                                <span>Avg friction on this path:</span>
+                                <span>{config.aggregatePaths ? "Avg friction on this path:" : "Friction on this path:"}</span>
                                 <span>{hoveredEdgeInfo.friction}</span>
                             </div>
                         </>

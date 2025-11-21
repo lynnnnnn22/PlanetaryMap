@@ -98,6 +98,10 @@
     pointer-events: none;
     transition: opacity 0.2s ease;
     opacity: 0.85;
+
+    paint-order: stroke;
+    stroke: #0b1736;
+    stroke-width: 3px;
 }
 
 .planetary-path-label--dim {
