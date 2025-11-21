@@ -85,7 +85,7 @@ const LEGENDS = {
     { id: "det-numbers", label: "Numbers", text: ["Labels show transition order."] }
   ],
   aggregated: [
-    { id: "agg-merge", label: "Merged paths", text: ["Combine all A → B transitions."] },
+    { id: "agg-merge", label: "Merged Paths", text: ["Combine all A → B transitions."] },
     { id: "agg-thick", label: "Thickness", text: ["Proportional to total number of traverses on a path."] },
     { id: "agg-gradient", label: "Gradient", text: ["Bright → faint shows direction."] }
   ],
@@ -668,8 +668,8 @@ function PlanetaryMap({ data, variant = "basic", appColors = {}, appOrbits = {},
         const seconds = appEntry ? appEntry.seconds : 0;
         const share = totalSeconds > 0 ? seconds / totalSeconds : 0;
 
-        const incoming = transitions.filter((t) => t.to.app === hoveredApp);
-        const outgoing = transitions.filter((t) => t.from.app === hoveredApp);
+        const incoming = rawTransitions.filter((t) => t.to.app === hoveredApp);
+        const outgoing = rawTransitions.filter((t) => t.from.app === hoveredApp);
 
         const allRelated = [...incoming, ...outgoing];
         const avgFriction =
