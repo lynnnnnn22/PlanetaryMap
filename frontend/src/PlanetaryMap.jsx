@@ -257,6 +257,27 @@ function PlanetaryLegendIcon({ id }) {
   return null;
 }
 
+const ORBIT_INFO = [
+    {
+        id: 0,
+        title: "Tier 1 – Essential applications",
+        description:
+            "Core tools you cannot complete the task without; you spend most of your active working time here."
+    },
+    {
+        id: 1,
+        title: "Tier 2 – Supporting applications",
+        description:
+            "Secondary tools that support your work; not always necessary but frequently used to aid completion."
+    },
+    {
+        id: 2,
+        title: "Tier 3 – Peripheral applications",
+        description:
+            "Applications not directly required for the task, often used during breaks or in parallel with work."
+    }
+];
+
 // Shared line generator used by the wiggly path
 const lineGen = d3.line().curve(d3.curveNatural);
 
@@ -455,6 +476,7 @@ function pathLabelPosition(from, to, fromRadius, parallelIndex = 0, parallelCoun
 function PlanetaryMap({ data, variant = "basic", appColors = {}, appOrbits = {}, timeWindowHours = null }) {
     const [hoveredApp, setHoveredApp] = useState(null);
     const [hoveredEdgeId, setHoveredEdgeId] = useState(null);
+    const [hoveredOrbit, setHoveredOrbit] = useState(null);
     const [showLegend, setShowLegend] = useState(true);
 
     // zoom refs
@@ -622,9 +644,19 @@ function PlanetaryMap({ data, variant = "basic", appColors = {}, appOrbits = {},
             return set;
         }
 
+        if (hoveredOrbit != null) {
+            const set = new Set();
+            for (const p of planets) {
+                if (p.orbit === hoveredOrbit) {
+                    set.add(p.app);
+                }
+            }
+            return set;
+        }
+
         // No hover → no highlighting
         return null;
-    }, [hoveredApp, hoveredEdgeId, transitions]);
+    }, [hoveredApp, hoveredEdgeId, hoveredOrbit, transitions, planets]);
 
     // 7. Tooltip info
     const totalSeconds = d3.sum(appTimes, (d) => d.seconds) || 0;
@@ -669,6 +701,11 @@ function PlanetaryMap({ data, variant = "basic", appColors = {}, appOrbits = {},
             count: edge.count || 1,
         };
     }, [hoveredEdgeId, transitions]);
+
+    const hoveredOrbitInfo = useMemo(() => {
+        if (hoveredOrbit == null) return null;
+        return ORBIT_INFO[hoveredOrbit] || null;
+    }, [hoveredOrbit]);
 
     // ------------------------------------------------------
     // Render
@@ -720,7 +757,14 @@ function PlanetaryMap({ data, variant = "basic", appColors = {}, appOrbits = {},
                     {/* Orbits */}
                     {orbitRadii.map((r, i) => (
                         <g key={i}>
-                            <circle className="orbit-hitbox" cx={0} cy={0} r={r} />
+                            <circle
+                                className="orbit-hitbox"
+                                cx={0}
+                                cy={0}
+                                r={r}
+                                onMouseEnter={() => setHoveredOrbit(i)}
+                                onMouseLeave={() => setHoveredOrbit(null)}
+                            />
                             <circle className="planetary-orbit" cx={0} cy={0} r={r} />
                         </g>
                     ))}
@@ -744,8 +788,13 @@ function PlanetaryMap({ data, variant = "basic", appColors = {}, appOrbits = {},
                                 isHoveredEdge ? "planetary-edge--hover" : "planetary-edge--dim"
                             );
                         }
+                        if (hoveredOrbit != null) {
+                            classes.push(
+                                "planetary-edge--dim"
+                            );
+                        }
                         const labelClasses = ["planetary-path-label"];
-                        if (hoveredApp || hoveredEdgeId != null) {
+                        if (hoveredApp || hoveredEdgeId != null || hoveredOrbit != null) {
                             if (isHoveredEdge || isConnected) {
                                 labelClasses.push("planetary-path-label--active");
                             } else {
@@ -862,7 +911,7 @@ function PlanetaryMap({ data, variant = "basic", appColors = {}, appOrbits = {},
             </svg>
 
             {/* Tooltip */}
-            {(hoveredAppInfo || hoveredEdgeInfo) && (
+            {(hoveredAppInfo || hoveredEdgeInfo || hoveredOrbitInfo) && (
                 <div className="planetary-tooltip">
                     {hoveredAppInfo && (
                         <>
@@ -912,6 +961,19 @@ function PlanetaryMap({ data, variant = "basic", appColors = {}, appOrbits = {},
                             <div className="planetary-tooltip-row">
                                 <span>Avg friction on this path:</span>
                                 <span>{hoveredEdgeInfo.friction}</span>
+                            </div>
+                        </>
+                    )}
+
+                    {hoveredOrbitInfo && (
+                        <>
+                            <div className="planetary-tooltip-header">
+                                <span className="planetary-tooltip-title">
+                                    {hoveredOrbitInfo.title}
+                                </span>
+                            </div>
+                            <div className="planetary-tooltip-row">
+                                <span>{hoveredOrbitInfo.description}</span>
                             </div>
                         </>
                     )}
