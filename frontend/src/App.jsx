@@ -277,45 +277,6 @@ function App() {
             </select>
           </SettingsSection>
 
-          {/* PLANET COLOUR SECTION */}
-          <SettingsSection
-            title="Planet Appearance"
-            isOpen={showPlanetSection}
-            onToggle={() => setShowPlanetSection((v) => !v)}
-          >
-            {/* <div className="app-settings-label">Planet colours</div> */}
-
-            {topPlanets.length === 0 ? (
-              <div className="app-settings-description-inner">
-                <p>No planets yet — start working to see tools appear here.</p>
-              </div>
-            ) : (
-              <>
-                <div className="app-settings-description-inner" style={{ marginBottom: "0.5rem" }}>
-                  <p>For personalized planets, please pick a custom colour for each planet.</p>
-                </div>
-                <div className="app-planet-colors-list">
-                  {topPlanets.map((app) => (
-                    <div key={app} className="app-planet-color-row">
-                      <span className="app-planet-color-label">{app}</span>
-                      <input
-                        type="color"
-                        className="app-settings-color-input"
-                        value={appColors[app]}
-                        onChange={(e) =>
-                          setPlanetColorOverrides((prev) => ({
-                            ...prev,
-                            [app]: e.target.value
-                          }))
-                        }
-                      />
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </SettingsSection>
-
           <SettingsSection
             title="Tool Importance (Orbits)"
             isOpen={showOrbitSection}
@@ -355,6 +316,45 @@ function App() {
                       </div>
                     );
                   })}
+                </div>
+              </>
+            )}
+          </SettingsSection>
+
+          {/* PLANET COLOUR SECTION */}
+          <SettingsSection
+            title="Planet Appearance"
+            isOpen={showPlanetSection}
+            onToggle={() => setShowPlanetSection((v) => !v)}
+          >
+            {/* <div className="app-settings-label">Planet colours</div> */}
+
+            {topPlanets.length === 0 ? (
+              <div className="app-settings-description-inner">
+                <p>No planets yet — start working to see tools appear here.</p>
+              </div>
+            ) : (
+              <>
+                <div className="app-settings-description-inner" style={{ marginBottom: "0.5rem" }}>
+                  <p>For personalized planets, please pick a custom colour for each planet.</p>
+                </div>
+                <div className="app-planet-colors-list">
+                  {topPlanets.map((app) => (
+                    <div key={app} className="app-planet-color-row">
+                      <span className="app-planet-color-label">{app}</span>
+                      <input
+                        type="color"
+                        className="app-settings-color-input"
+                        value={appColors[app]}
+                        onChange={(e) =>
+                          setPlanetColorOverrides((prev) => ({
+                            ...prev,
+                            [app]: e.target.value
+                          }))
+                        }
+                      />
+                    </div>
+                  ))}
                 </div>
               </>
             )}

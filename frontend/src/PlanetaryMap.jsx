@@ -72,7 +72,12 @@ const LEGENDS = {
     },
     {
         id: "hover-tip",
-        label: "👆 Hover to see more info!",
+        label: "Hover to see more info!",
+        text: []
+    },
+    {
+        id: "drag-tip",
+        label: "Drag planets to your desired position!",
         text: []
     }
   ],
@@ -139,7 +144,7 @@ function PlanetaryLegend({ variant, showLegend, onToggle }) {
 }
 
 function LegendItem({ item }) {
-  const isCore = item.id === "planets" || item.id === "paths" || item.id === "orbits";
+  const isCore = item.id === "planets" || item.id === "paths" || item.id === "orbits" || item.id === "hover-tip" || item.id === "drag-tip";
 
   return (
     <div className="planetary-legend-item">
@@ -179,6 +184,15 @@ function LegendItem({ item }) {
 function PlanetaryLegendIcon({ id }) {
   // Small 18×18 inline SVGs
   const size = 18;
+
+  const emojiStyle = {
+    fontSize: "16px",
+    width: `${size}px`,
+    height: `${size}px`,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  };
 
   if (id === "planets") {
     // Circle planet
@@ -251,6 +265,14 @@ function PlanetaryLegendIcon({ id }) {
         />
       </svg>
     );
+  }
+
+  if (id === "hover-tip") {
+    return <span style={emojiStyle}>👆</span>;
+  }
+
+  if (id === "drag-tip") {
+    return <span style={emojiStyle}>🖐</span>;
   }
 
   // Default: no icon (for mode-specific items)
